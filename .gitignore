@@ -39,6 +39,7 @@ testem.log
 
 # Environment variables
 .env
+artifacts/api-server/.env
 .env.*
 
 # System Files
