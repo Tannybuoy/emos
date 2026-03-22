@@ -20,37 +20,57 @@ Built with React 19, Express 5, PostgreSQL, and the Spotify API.
 pnpm install
 ```
 
-### Configure (optional)
+### Set up PostgreSQL
 
-Create `artifacts/api-server/.env` with your Spotify credentials:
+Install PostgreSQL and create the database:
+
+```bash
+# Option A: Using the CLI tools (add PostgreSQL bin to PATH if needed)
+createdb -U postgres emos
+
+# Option B: Using Docker (easiest)
+docker run --name emos-db -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=emos -p 5432:5432 -d postgres:16
+```
+
+On Windows, if `createdb`/`psql` aren't recognized, add `C:\Program Files\PostgreSQL\<version>\bin` to your system PATH.
+
+### Configure
+
+Create `artifacts/api-server/.env`:
 
 ```
+PORT=3000
+DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@localhost:5432/emos
 SPOTIFY_CLIENT_ID=your_client_id
 SPOTIFY_CLIENT_SECRET=your_client_secret
 ```
 
-If you have PostgreSQL running, push the database schema:
+Replace `YOUR_PASSWORD` with your PostgreSQL password (or `postgres` if using Docker).
+
+Spotify credentials are optional — the app falls back to mock data without them.
+
+### Push the database schema
 
 ```bash
 cd lib/db
+set DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@localhost:5432/emos  # Windows
+# export DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@localhost:5432/emos  # macOS/Linux
 pnpm run push
 ```
 
 ### Run
 
-Start the frontend and backend in two separate terminals:
+From the project root:
 
 ```bash
-# Terminal 1 — Frontend (Vite dev server)
-cd artifacts/emos
-pnpm run dev
-# → http://localhost:5173
-
-# Terminal 2 — Backend (Express API server)
-cd artifacts/api-server
-pnpm run dev
-# → http://localhost:3000
+pnpm dev
 ```
+
+This starts all services together:
+
+- **Frontend**: http://localhost:5173
+- **API server**: http://localhost:3000
+- **Mockup sandbox**: http://localhost:5174
 
 Open http://localhost:5173 in your browser.
 
