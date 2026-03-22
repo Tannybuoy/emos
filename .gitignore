@@ -37,6 +37,12 @@ yarn-error.log
 testem.log
 /typings
 
+# Environment variables
+.env
+artifacts/api-server/.env
+artifacts/emos/.env
+.env.*
+
 # System Files
 .DS_Store
 Thumbs.db
