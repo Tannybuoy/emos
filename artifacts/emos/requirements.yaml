@@ -1,0 +1,11 @@
+packages:
+  "zustand": "Global state management for the multi-page flow without complex providers"
+  "framer-motion": "Smooth animations, staggered entry effects, and fluid page transitions"
+  "clsx": "Utility for conditionally joining class names"
+  "tailwind-merge": "Utility to safely merge Tailwind CSS classes"
+  "sonner": "Beautiful, lightweight toast notifications"
+
+notes:
+  - App relies on `@workspace/api-client-react` for generated React Query hooks based on OpenAPI spec.
+  - The magnetic dot grid captures mouse events globally to provide an immersive interactive background across all pages.
+  - Missing Spotify credentials in the backend will still return a graceful empty-results profile.

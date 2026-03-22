@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "emos"
+version = "1.0.0"
+id = "artifacts/emos"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+localPort = 18724
+name = "web"
+paths = ["/"]
+
+[services.development]
+run = "pnpm --filter @workspace/emos run dev"
+
+[services.env]
+PORT = "18724"
+BASE_PATH = "/"
+
+[services.production]
+build = ["pnpm", "--filter", "@workspace/emos", "run", "build"]
+publicDir = "artifacts/emos/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"

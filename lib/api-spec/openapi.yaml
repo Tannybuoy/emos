@@ -1,0 +1,265 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: music
+    description: Music profile generation
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /generate-music-profile:
+    post:
+      operationId: generateMusicProfile
+      tags: [music]
+      summary: Generate music profile
+      description: Maps work role and mental states to a music profile and returns Spotify results
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateMusicProfileRequest"
+      responses:
+        "200":
+          description: Music profile and Spotify results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerateMusicProfileResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /submit-feedback:
+    post:
+      operationId: submitFeedback
+      tags: [music]
+      summary: Submit feedback
+      description: Submit thumbs up or down feedback for a music profile session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubmitFeedbackRequest"
+      responses:
+        "200":
+          description: Feedback recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubmitFeedbackResponse"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    GenerateMusicProfileRequest:
+      type: object
+      properties:
+        role:
+          type: string
+          description: The user's work role (e.g. Engineer, Designer, PM)
+        states:
+          type: array
+          items:
+            type: string
+          minItems: 3
+          maxItems: 5
+          description: 3-5 selected states from the emotion wheel
+      required:
+        - role
+        - states
+
+    MusicProfile:
+      type: object
+      properties:
+        bpmMin:
+          type: integer
+        bpmMax:
+          type: integer
+        instrumental:
+          type: boolean
+        energyLevel:
+          type: string
+          enum: [low, medium, high]
+        mood:
+          type: string
+          enum: [calm, intense, uplifting]
+        progression:
+          type: string
+          enum: [steady, ramp-up, dynamic]
+        searchQuery:
+          type: string
+          description: Spotify search query derived from the profile
+        summary:
+          type: string
+          description: Human-readable summary like "Tuning your environment for Calm Focus to Finish Strong"
+      required:
+        - bpmMin
+        - bpmMax
+        - instrumental
+        - energyLevel
+        - mood
+        - progression
+        - searchQuery
+        - summary
+
+    SpotifyTrack:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        artists:
+          type: array
+          items:
+            type: string
+        albumName:
+          type: string
+        albumImageUrl:
+          type: string
+        previewUrl:
+          type: string
+          nullable: true
+        spotifyUrl:
+          type: string
+        durationMs:
+          type: integer
+      required:
+        - id
+        - name
+        - artists
+        - albumName
+        - spotifyUrl
+        - durationMs
+
+    SpotifyPlaylist:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        imageUrl:
+          type: string
+        spotifyUrl:
+          type: string
+        embedUrl:
+          type: string
+        trackCount:
+          type: integer
+      required:
+        - id
+        - name
+        - spotifyUrl
+        - embedUrl
+        - trackCount
+
+    GenerateMusicProfileResponse:
+      type: object
+      properties:
+        profile:
+          $ref: "#/components/schemas/MusicProfile"
+        playlists:
+          type: array
+          items:
+            $ref: "#/components/schemas/SpotifyPlaylist"
+        tracks:
+          type: array
+          items:
+            $ref: "#/components/schemas/SpotifyTrack"
+        sessionId:
+          type: string
+          description: Unique session ID for feedback tracking
+      required:
+        - profile
+        - playlists
+        - tracks
+        - sessionId
+
+    SubmitFeedbackRequest:
+      type: object
+      properties:
+        sessionId:
+          type: string
+        rating:
+          type: string
+          enum: [thumbs_up, thumbs_down]
+        role:
+          type: string
+        states:
+          type: array
+          items:
+            type: string
+        profile:
+          $ref: "#/components/schemas/MusicProfile"
+      required:
+        - sessionId
+        - rating
+
+    SubmitFeedbackResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      required:
+        - success
+        - message
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+        - error
+        - message

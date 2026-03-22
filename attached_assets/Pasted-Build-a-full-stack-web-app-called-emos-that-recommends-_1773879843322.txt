@@ -1,0 +1,177 @@
+Build a full-stack web app called **"emos"** that recommends music based on a user’s work role and current mental state using an interactive emotion-style wheel. 
+
+### 🧠 Core Concept
+
+Users enter their **work role**, then select **3–5 states** from a clickable “work state wheel.” Based on their selections, the app generates a **music profile** and plays a curated playlist using the Spotify API.
+
+---
+
+## 🎯 User Flow
+
+1. Landing Page:
+
+   * Clean, modern UI
+   * Input field: “What’s your role?” (e.g., Product Manager, Engineer, Student)
+   * Button: “Continue”
+
+2. State Selection Page:
+
+   * Display a **3-layer circular wheel UI** (like an emotion wheel)
+
+### Wheel Structure:
+
+**Inner Ring (Primary States):**
+
+* Focused
+* Stressed
+* Tired
+* Energized
+* Bored
+
+**Middle Ring (Modifiers):**
+
+* Calm
+* Anxious
+* Distracted
+* Locked-in
+* Overwhelmed
+* In Control
+* Curious
+* Blocked
+
+**Outer Ring (Intent):**
+
+* Start
+* Continue
+* Finish
+* Recover
+
+### Interaction:
+
+* User can click 3–5 states total
+* Selected states highlight visually
+* Show selected states as tags at top
+* Button: “Generate My Sound”
+
+---
+
+## 🎧 Music Mapping Logic
+
+When user clicks “Generate My Sound,” map selections into music attributes:
+
+Create a function:
+`mapStateToMusic(states: string[], role: string)`
+
+Return:
+
+* bpmRange (e.g., 60–80, 90–110)
+* instrumental (true/false)
+* energyLevel (low/medium/high)
+* mood (calm, intense, uplifting)
+* progression (steady, ramp-up, dynamic)
+
+### Example Rules:
+
+* "Stressed" → low BPM, instrumental = true
+* "Distracted" → instrumental = true
+* "Tired" → gradual BPM increase
+* "Energized" → higher BPM
+* "Finish" → ramp-up intensity
+* "Focused" → steady rhythm
+
+Role adds bias:
+
+* Engineer → prioritize instrumental
+* PM → allow light vocals
+* Designer → allow more variation
+
+---
+
+## 🔗 Spotify Integration
+
+Use Spotify Web API:
+
+* Authenticate user with OAuth
+* Based on mapped attributes, fetch or generate playlists
+* Either:
+
+  * Search playlists by keywords (e.g., “lofi focus”, “deep work techno”)
+  * OR recommend tracks using Spotify recommendations endpoint
+
+Display:
+
+* Playlist embed OR list of tracks
+* Play button
+
+---
+
+## 🎨 UI / UX Requirements
+
+* Use React (Next.js preferred)
+* Tailwind CSS for styling
+* Smooth animations (Framer Motion optional)
+* Wheel should be interactive (SVG or div-based radial layout)
+
+### Design Style:
+
+* Minimal, calming
+* Dark mode default
+* Soft gradients
+* Rounded UI elements
+
+---
+
+## 🧩 Components to Build
+
+* RoleInput component
+* StateWheel component (interactive radial selector)
+* SelectedStatesDisplay
+* GenerateButton
+* MusicPlayer component
+* Mapping logic module
+
+---
+
+## 🗂 Backend
+
+* Node.js (Express or Next.js API routes)
+
+* Endpoint:
+  POST /generate-music-profile
+  Body: { role, states[] }
+
+* Returns music profile + Spotify results
+
+---
+
+## 🧠 Bonus Features (if time permits)
+
+* Show summary:
+  “Tuning your environment for: Calm Focus to Finish Strong”
+
+* Feedback buttons:
+  👍 This helped
+  👎 Not quite
+
+* Save session history (local storage or DB)
+
+---
+
+## 🔐 Environment Variables
+
+* SPOTIFY_CLIENT_ID
+* SPOTIFY_CLIENT_SECRET
+* SPOTIFY_REDIRECT_URI
+
+---
+
+## 🚀 Deliverables
+
+* Fully working UI
+* Functional state selection
+* Mapping logic implemented
+* Spotify music playback or playlist display working
+
+---
+
+Focus on making the **wheel interaction intuitive and satisfying**, and the **music output feel intentional, not random**.
