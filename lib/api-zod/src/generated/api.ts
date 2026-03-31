@@ -82,39 +82,5 @@ export const GenerateMusicProfileResponse = zod.object({
       durationMs: zod.number(),
     }),
   ),
-  sessionId: zod.string().describe("Unique session ID for feedback tracking"),
-});
-
-/**
- * Submit thumbs up or down feedback for a music profile session
- * @summary Submit feedback
- */
-export const SubmitFeedbackBody = zod.object({
-  sessionId: zod.string(),
-  rating: zod.enum(["thumbs_up", "thumbs_down"]),
-  role: zod.string().optional(),
-  states: zod.array(zod.string()).optional(),
-  profile: zod
-    .object({
-      bpmMin: zod.number(),
-      bpmMax: zod.number(),
-      instrumental: zod.boolean(),
-      energyLevel: zod.enum(["low", "medium", "high"]),
-      mood: zod.enum(["calm", "intense", "uplifting"]),
-      progression: zod.enum(["steady", "ramp-up", "dynamic"]),
-      searchQuery: zod
-        .string()
-        .describe("Spotify search query derived from the profile"),
-      summary: zod
-        .string()
-        .describe(
-          'Human-readable summary like \"Tuning your environment for Calm Focus to Finish Strong\"',
-        ),
-    })
-    .optional(),
-});
-
-export const SubmitFeedbackResponse = zod.object({
-  success: zod.boolean(),
-  message: zod.string(),
+  sessionId: zod.string().describe("Unique session ID"),
 });
