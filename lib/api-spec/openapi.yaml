@@ -108,6 +108,12 @@ components:
           minItems: 3
           maxItems: 5
           description: 3-5 selected states from the emotion wheel
+        instrumental:
+          type: boolean
+          description: Whether to prefer instrumental (no vocals) music
+        language:
+          type: string
+          description: Preferred language for music (e.g. "any", "english", "japanese")
       required:
         - role
         - states

@@ -18,6 +18,10 @@ export interface GenerateMusicProfileRequest {
    * @maxItems 5
    */
   states: string[];
+  /** Whether to prefer instrumental (no vocals) music */
+  instrumental?: boolean;
+  /** Preferred language for music (e.g. "any", "english", "japanese") */
+  language?: string;
 }
 
 export type MusicProfileEnergyLevel =
