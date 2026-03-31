@@ -85,29 +85,7 @@ export interface GenerateMusicProfileResponse {
   profile: MusicProfile;
   playlists: SpotifyPlaylist[];
   tracks: SpotifyTrack[];
-  /** Unique session ID for feedback tracking */
   sessionId: string;
-}
-
-export type SubmitFeedbackRequestRating =
-  (typeof SubmitFeedbackRequestRating)[keyof typeof SubmitFeedbackRequestRating];
-
-export const SubmitFeedbackRequestRating = {
-  thumbs_up: "thumbs_up",
-  thumbs_down: "thumbs_down",
-} as const;
-
-export interface SubmitFeedbackRequest {
-  sessionId: string;
-  rating: SubmitFeedbackRequestRating;
-  role?: string;
-  states?: string[];
-  profile?: MusicProfile;
-}
-
-export interface SubmitFeedbackResponse {
-  success: boolean;
-  message: string;
 }
 
 export interface ErrorResponse {

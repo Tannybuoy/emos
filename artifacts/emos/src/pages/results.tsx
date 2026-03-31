@@ -1,19 +1,13 @@
 import { useAppStore } from '@/store/use-app-store';
 import { useLocation } from 'wouter';
-import { useSubmitFeedback } from '@workspace/api-client-react';
-import { Button } from '@/components/ui/button';
-import { ThumbsUp, ThumbsDown, RotateCcw, ArrowLeft } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { toast } from 'sonner';
+import { RotateCcw, ArrowLeft } from 'lucide-react';
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { capture } from '@/lib/posthog';
 
 export default function ResultsPage() {
   const { results, role, selectedStates, reset } = useAppStore();
   const [, setLocation] = useLocation();
-  const [feedbackStatus, setFeedbackStatus] = useState<'idle'|'submitting'|'success'>('idle');
-  const feedbackMutation = useSubmitFeedback();
-
   useEffect(() => {
     if (results?.playlists?.[0]) {
       capture('playlist_received', {
@@ -28,28 +22,10 @@ export default function ResultsPage() {
     return (
       <div className="flex flex-col items-center justify-center h-[100dvh] text-center relative z-10 p-6">
         <h2 className="text-3xl font-display font-bold text-white mb-6">No sound profile found</h2>
-        <Button onClick={() => setLocation('/')}>Start Over</Button>
+        <button onClick={() => setLocation('/')} className="text-white hover:text-primary transition-colors font-display font-bold">Start Over</button>
       </div>
     );
   }
-
-  const handleFeedback = (rating: 'thumbs_up' | 'thumbs_down') => {
-    capture('feedback_submitted', { rating });
-    setFeedbackStatus('submitting');
-    feedbackMutation.mutate(
-      { data: { sessionId: results.sessionId, rating, role, states: selectedStates, profile: results.profile } },
-      {
-        onSuccess: () => {
-          setFeedbackStatus('success');
-          toast.success('Feedback recorded!');
-        },
-        onError: () => {
-          setFeedbackStatus('idle');
-          toast.error('Failed to submit feedback');
-        }
-      }
-    );
-  };
 
   const handleStartOver = () => {
     capture('session_restarted');
@@ -126,25 +102,6 @@ export default function ResultsPage() {
           <RotateCcw className="w-4 h-4 mr-2" /> Start another session
         </button>
 
-        <h4 className="text-xs font-medium text-white/40 mb-3">Did this profile help you?</h4>
-        <div className="flex items-center">
-          <Button
-            variant="outline"
-            onClick={() => handleFeedback('thumbs_up')}
-            disabled={feedbackStatus !== 'idle'}
-            className="w-36 text-sm font-medium text-white/40 bg-card/80 border-white/10 rounded-r-none hover:bg-primary/20 hover:text-primary hover:border-primary/50"
-          >
-            <ThumbsUp className="w-4 h-4 mr-2" /> Yes, perfectly
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => handleFeedback('thumbs_down')}
-            disabled={feedbackStatus !== 'idle'}
-            className="w-36 text-sm font-medium text-white/40 bg-card/80 border-white/10 rounded-l-none border-l-0 hover:bg-destructive/20 hover:text-destructive hover:border-destructive/50"
-          >
-            <ThumbsDown className="w-4 h-4 mr-2" /> Not quite
-          </Button>
-        </div>
       </motion.div>
     </div>
   );

@@ -1,9 +1,8 @@
 import { Router, type IRouter, type Request, type Response } from "express";
 import { randomUUID } from "crypto";
-import { GenerateMusicProfileBody, GenerateMusicProfileResponse, SubmitFeedbackBody, SubmitFeedbackResponse } from "@workspace/api-zod";
+import { GenerateMusicProfileBody, GenerateMusicProfileResponse } from "@workspace/api-zod";
 import { mapStateToMusic } from "../lib/musicMapping.js";
 import { searchPlaylists, getRecommendations, getFallbackPlaylists } from "../lib/spotify.js";
-import { getDb, feedbackTable } from "@workspace/db";
 
 const router: IRouter = Router();
 
@@ -93,31 +92,6 @@ router.post("/generate-music-profile", async (req: Request, res: Response) => {
     } else {
       res.status(500).json({ error: "internal_error", message: "Failed to generate music profile" });
     }
-  }
-});
-
-router.post("/submit-feedback", async (req: Request, res: Response) => {
-  try {
-    const body = SubmitFeedbackBody.parse(req.body);
-    const { sessionId, rating, role, states } = body;
-
-    await getDb().insert(feedbackTable).values({
-      sessionId,
-      rating,
-      role: role ?? null,
-      states: states ?? null,
-      profile: body.profile ? (body.profile as Record<string, unknown>) : null,
-    });
-
-    const response = SubmitFeedbackResponse.parse({
-      success: true,
-      message: "Thanks for your feedback!",
-    });
-
-    res.json(response);
-  } catch (err) {
-    console.error("submit-feedback error:", err instanceof Error ? err.message : String(err));
-    res.status(500).json({ error: "internal_error", message: "Failed to save feedback" });
   }
 });
 

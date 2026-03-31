@@ -13,6 +13,5 @@ export interface GenerateMusicProfileResponse {
   profile: MusicProfile;
   playlists: SpotifyPlaylist[];
   tracks: SpotifyTrack[];
-  /** Unique session ID for feedback tracking */
   sessionId: string;
 }

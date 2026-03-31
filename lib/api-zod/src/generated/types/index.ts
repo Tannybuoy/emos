@@ -16,6 +16,3 @@ export * from "./musicProfileMood";
 export * from "./musicProfileProgression";
 export * from "./spotifyPlaylist";
 export * from "./spotifyTrack";
-export * from "./submitFeedbackRequest";
-export * from "./submitFeedbackRequestRating";
-export * from "./submitFeedbackResponse";
