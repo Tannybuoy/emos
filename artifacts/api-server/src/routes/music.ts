@@ -1,10 +1,10 @@
-import { Router, type IRouter, type Request, type Response } from "express";
+import { Router, type Request, type Response } from "express";
 import { randomUUID } from "crypto";
 import { GenerateMusicProfileBody, GenerateMusicProfileResponse } from "@workspace/api-zod";
 import { mapStateToMusic } from "../lib/musicMapping.js";
 import { searchPlaylists, getRecommendations, getFallbackPlaylists } from "../lib/spotify.js";
 
-const router: IRouter = Router();
+const router = Router();
 
 router.post("/generate-music-profile", async (req: Request, res: Response) => {
   try {
