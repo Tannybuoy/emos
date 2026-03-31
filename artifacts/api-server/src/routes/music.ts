@@ -3,7 +3,7 @@ import { randomUUID } from "crypto";
 import { GenerateMusicProfileBody, GenerateMusicProfileResponse, SubmitFeedbackBody, SubmitFeedbackResponse } from "@workspace/api-zod";
 import { mapStateToMusic } from "../lib/musicMapping.js";
 import { searchPlaylists, getRecommendations, getFallbackPlaylists } from "../lib/spotify.js";
-import { db, feedbackTable } from "@workspace/db";
+import { getDb, feedbackTable } from "@workspace/db";
 
 const router: IRouter = Router();
 
@@ -101,7 +101,7 @@ router.post("/submit-feedback", async (req: Request, res: Response) => {
     const body = SubmitFeedbackBody.parse(req.body);
     const { sessionId, rating, role, states } = body;
 
-    await db.insert(feedbackTable).values({
+    await getDb().insert(feedbackTable).values({
       sessionId,
       rating,
       role: role ?? null,
