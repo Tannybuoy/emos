@@ -67,6 +67,28 @@ async function buildAll() {
     external: externals,
     logLevel: "info",
   });
+
+  // Build a self-contained Vercel serverless function bundle.
+  // This bundles ALL dependencies (including workspace packages) so that
+  // Vercel's function bundler doesn't need to resolve pnpm workspace symlinks.
+  console.log("building vercel serverless function...");
+  await esbuild({
+    entryPoints: [path.resolve(__dirname, "src/app.ts")],
+    platform: "node",
+    bundle: true,
+    format: "esm",
+    outfile: path.resolve(__dirname, "..", "..", "api", "index.mjs"),
+    define: {
+      "process.env.NODE_ENV": '"production"',
+    },
+    minify: true,
+    // Bundle everything — no externals — so the function is fully self-contained
+    logLevel: "info",
+    banner: {
+      // Shim require() for any CJS-only deps when outputting ESM
+      js: `import { createRequire } from 'module'; const require = createRequire(import.meta.url);`,
+    },
+  });
 }
 
 buildAll().catch((err) => {
