@@ -1,7 +1,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import { build as esbuild } from "esbuild";
-import { rm, readFile } from "fs/promises";
+import { rm, readFile, mkdir, writeFile } from "fs/promises";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -68,17 +68,21 @@ async function buildAll() {
     logLevel: "info",
   });
 
-  // Build a self-contained Vercel serverless function.
+  // Build a self-contained Vercel serverless function using the Build Output API.
   // Bundles ALL deps (including workspace packages like @workspace/api-zod)
   // so Vercel doesn't need to resolve pnpm workspace symlinks or compile TS.
   console.log("building vercel serverless function...");
   const vercelEntry = path.resolve(__dirname, "src", "vercel.ts");
+  const vercelOutputDir = path.resolve(__dirname, "..", "..", ".vercel", "output");
+  const funcDir = path.resolve(vercelOutputDir, "functions", "api", "[[...path]].func");
+  await mkdir(funcDir, { recursive: true });
+
   await esbuild({
     entryPoints: [vercelEntry],
     platform: "node",
     bundle: true,
     format: "esm",
-    outfile: path.resolve(__dirname, "..", "..", "api", "[...path].mjs"),
+    outfile: path.resolve(funcDir, "index.mjs"),
     define: {
       "process.env.NODE_ENV": '"production"',
     },
@@ -88,6 +92,24 @@ async function buildAll() {
       js: `import { createRequire } from 'module'; const require = createRequire(import.meta.url);`,
     },
   });
+
+  // Write Vercel function config
+  await writeFile(
+    path.resolve(funcDir, ".vc-config.json"),
+    JSON.stringify({ runtime: "nodejs20.x", handler: "index.mjs", launcherType: "Nodejs" }),
+  );
+
+  // Write Vercel Build Output API config
+  await writeFile(
+    path.resolve(vercelOutputDir, "config.json"),
+    JSON.stringify({
+      version: 3,
+      routes: [
+        { handle: "filesystem" },
+        { src: "/(.*)", dest: "/index.html" },
+      ],
+    }),
+  );
 }
 
 buildAll().catch((err) => {
