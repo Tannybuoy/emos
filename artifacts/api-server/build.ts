@@ -74,7 +74,7 @@ async function buildAll() {
   console.log("building vercel serverless function...");
   const vercelEntry = path.resolve(__dirname, "src", "vercel.ts");
   const vercelOutputDir = path.resolve(__dirname, "..", "..", ".vercel", "output");
-  const funcDir = path.resolve(vercelOutputDir, "functions", "api", "[[...path]].func");
+  const funcDir = path.resolve(vercelOutputDir, "functions", "api.func");
   await mkdir(funcDir, { recursive: true });
 
   await esbuild({
@@ -105,6 +105,7 @@ async function buildAll() {
     JSON.stringify({
       version: 3,
       routes: [
+        { src: "/api/(.*)", dest: "/api" },
         { handle: "filesystem" },
         { src: "/(.*)", dest: "/index.html" },
       ],
