@@ -3,7 +3,7 @@
 # compiled output
 dist
 /public
-/api/index.mjs
+/api/*.mjs
 tmp
 out-tsc
 *.tsbuildinfo

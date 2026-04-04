@@ -78,7 +78,7 @@ async function buildAll() {
     platform: "node",
     bundle: true,
     format: "esm",
-    outfile: path.resolve(__dirname, "..", "..", "api", "index.mjs"),
+    outfile: path.resolve(__dirname, "..", "..", "api", "[...path].mjs"),
     define: {
       "process.env.NODE_ENV": '"production"',
     },
