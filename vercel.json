@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "pnpm run build",
+  "buildCommand": "pnpm run build:vercel",
   "outputDirectory": "public",
   "installCommand": "pnpm install",
   "framework": null,
@@ -9,11 +9,5 @@
       "source": "/api/(.*)",
       "destination": "/api"
     }
-  ],
-  "functions": {
-    "api/index.ts": {
-      "memory": 256,
-      "maxDuration": 10
-    }
-  }
+  ]
 }

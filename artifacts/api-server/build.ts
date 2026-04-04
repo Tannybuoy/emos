@@ -67,6 +67,27 @@ async function buildAll() {
     external: externals,
     logLevel: "info",
   });
+
+  // Build a self-contained Vercel serverless function.
+  // Bundles ALL deps (including workspace packages like @workspace/api-zod)
+  // so Vercel doesn't need to resolve pnpm workspace symlinks or compile TS.
+  console.log("building vercel serverless function...");
+  const vercelEntry = path.resolve(__dirname, "src", "vercel.ts");
+  await esbuild({
+    entryPoints: [vercelEntry],
+    platform: "node",
+    bundle: true,
+    format: "esm",
+    outfile: path.resolve(__dirname, "..", "..", "api", "index.mjs"),
+    define: {
+      "process.env.NODE_ENV": '"production"',
+    },
+    minify: true,
+    logLevel: "info",
+    banner: {
+      js: `import { createRequire } from 'module'; const require = createRequire(import.meta.url);`,
+    },
+  });
 }
 
 buildAll().catch((err) => {
