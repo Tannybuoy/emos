@@ -4,6 +4,7 @@
 dist
 /public
 /api/*.mjs
+.vercel/output
 tmp
 out-tsc
 *.tsbuildinfo

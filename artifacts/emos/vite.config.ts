@@ -42,7 +42,7 @@ export default defineConfig({
   },
   root: path.resolve(import.meta.dirname),
   build: {
-    outDir: path.resolve(import.meta.dirname, "..", "..", "public"),
+    outDir: path.resolve(import.meta.dirname, "..", "..", ".vercel", "output", "static"),
     emptyOutDir: true,
     chunkSizeWarningLimit: 1000,
   },
