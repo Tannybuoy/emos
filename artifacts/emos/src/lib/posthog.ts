@@ -9,6 +9,9 @@ if (key) {
     capture_pageview: false,
     capture_pageleave: true,
     autocapture: false,
+    session_recording: {
+      maskAllInputs: false,
+    },
   });
 }
 

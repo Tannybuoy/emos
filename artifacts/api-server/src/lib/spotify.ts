@@ -238,7 +238,7 @@ export async function getRecommendations(profile: MusicProfile, states: string[]
 
   const data = (await response.json()) as SpotifyTrackSearchResponse;
 
-  const INSTRUMENTAL_MARKERS = /\b(instrumental|karaoke|backing track|minus one|no vocal|no voice|off vocal)\b/i;
+  const INSTRUMENTAL_MARKERS = /\b(instrumental|karaoke|backing track|minus one|no vocal|no voice|off vocal|bgm|background music|music only|without lyrics)\b/i;
 
   return (data.tracks?.items ?? [])
     .filter((t) => {
@@ -263,11 +263,12 @@ export async function getRecommendations(profile: MusicProfile, states: string[]
 }
 
 export async function getFallbackPlaylists(profile: MusicProfile): Promise<PlaylistResult[]> {
-  const queryMap: Record<string, string> = {
-    calm: "lofi focus work",
-    intense: "deep work focus techno",
-    uplifting: "upbeat motivation work",
+  const queryMap: Record<string, { instrumental: string; vocal: string }> = {
+    calm:      { instrumental: "lofi focus work",          vocal: "chill pop hits relax" },
+    intense:   { instrumental: "deep work focus techno",   vocal: "pop intense workout" },
+    uplifting: { instrumental: "upbeat motivation work",   vocal: "uplifting pop hits feel good" },
   };
-  const query = queryMap[profile.mood] ?? "focus work playlist";
+  const entry = queryMap[profile.mood] ?? { instrumental: "focus work playlist", vocal: "pop hits playlist" };
+  const query = profile.instrumental ? entry.instrumental : entry.vocal;
   return searchPlaylists({ ...profile, searchQuery: query });
 }

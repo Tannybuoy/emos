@@ -40,12 +40,17 @@ router.post("/generate-music-profile", async (req: Request, res: Response) => {
 
       // Last resort: if both searches returned nothing, use a curated hardcoded playlist
       if (playlists.length === 0) {
-        const lastResortId = profile.mood === "calm" ? "37i9dQZF1DX8NTLI2TtZa6"
-          : profile.mood === "intense" ? "37i9dQZF1DWZeKCadgRdKQ"
-          : "37i9dQZF1DWWQRwui0ExPn";
+        // Instrumental playlists: Deep Focus / Brain Food / Lofi Beats
+        // Vocal playlists: Chill Hits / Pop Workout / Happy Hits
+        const lastResortId = profile.instrumental
+          ? (profile.mood === "calm" ? "37i9dQZF1DX8NTLI2TtZa6" : profile.mood === "intense" ? "37i9dQZF1DWZeKCadgRdKQ" : "37i9dQZF1DWWQRwui0ExPn")
+          : (profile.mood === "calm" ? "37i9dQZF1DX4WYpdgoIcn6" : profile.mood === "intense" ? "37i9dQZF1DWSJHnPb1f0X3" : "37i9dQZF1DXdLEN7aqioXM");
+        const lastName = profile.instrumental
+          ? (profile.mood === "calm" ? "Deep Focus" : profile.mood === "intense" ? "Brain Food" : "Lofi Beats")
+          : (profile.mood === "calm" ? "Chill Hits" : profile.mood === "intense" ? "Pop Workout" : "Happy Hits!");
         playlists = [{
           id: lastResortId,
-          name: profile.mood === "calm" ? "Deep Focus" : profile.mood === "intense" ? "Brain Food" : "Lofi Beats",
+          name: lastName,
           description: "Curated playlist for focused work",
           imageUrl: "",
           spotifyUrl: `https://open.spotify.com/playlist/${lastResortId}`,
